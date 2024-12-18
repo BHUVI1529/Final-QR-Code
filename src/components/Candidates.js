@@ -12,7 +12,7 @@ const Candidates = () => {
   useEffect(() => {
     // Fetching the data from the backend
     axios
-      .get('https://final-attendance.onrender.com/admin/users') // Update with the correct URL if necessary
+     .get('https://final-attendance.onrender.com/admin/users') // Update with the correct URL if necessary
       //.get(`http://localhost:8080/admin/users`) // Update with the correct URL if necessary
 
       .then(response => {
@@ -167,7 +167,7 @@ const Candidates = () => {
         <table className="w-full text-left border-collapse">
           <thead className="bg-green-500 text-white">
             <tr>
-              <th className="p-3">ID</th>
+              <th className="p-3">SNO</th>
               <th className="p-3">Name</th>
               <th className="p-3">Email</th>
               <th className="p-3">Course</th>
@@ -177,9 +177,9 @@ const Candidates = () => {
           </thead>
           <tbody>
             {filteredCandidates.length > 0 ? (
-              filteredCandidates.map(candidate => (
+              filteredCandidates.map((candidate,index) => (
                 <tr key={candidate.id} className="odd:bg-gray-100 even:bg-gray-50">
-                  <td className="p-3 border-t">{candidate.id}</td>
+                  <td className="p-3 border-t">{index + 1}</td> {/* Serial number */}
                   <td className="p-3 border-t">{candidate.name}</td>
                   <td className="p-3 border-t">{candidate.email}</td>
                   <td className="p-3 border-t">{candidate.course}</td>
