@@ -72,8 +72,8 @@ const LeavesPage = () => {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.get(
-        //`https://final-attendance.onrender.com/admin/leaveRequests/${requestId}/reject`,
-        `http://localhost:8080/admin/leaveRequests/${requestId}/reject`,
+        `https://final-attendance.onrender.com/admin/leaveRequests/${requestId}/reject`,
+        //`http://localhost:8080/admin/leaveRequests/${requestId}/reject`,
         { status: "Rejected" }, // Send the status as "Rejected" for the leave request
         {
           headers: {
