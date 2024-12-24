@@ -14,12 +14,10 @@ const ViewAttendance = () => {
   useEffect(() => {
     const fetchAttendanceData = async () => {
       try {
-       // const response = await axios.get('https://final-attendance.onrender.com/admin/attendance/all');
-       // const response = await axios.get('http://localhost:8080/admin/attendance/all');
-       
-       //const response = await axios.get('http://localhost:8080/admin/attendance/today'); 
+      // const response = await axios.get('http://localhost:8080/admin/attendance/today'); 
        const response = await axios.get('https://final-attendance.onrender.com/admin/attendance/today'); 
-       console.log('Fetched Attendance Data:', response.data); 
+       
+      console.log('Fetched Attendance Data:', response.data); 
 
         // NEW: Filter data to get the most recent attendance record for each user
       const uniqueUserAttendance = {};
@@ -58,26 +56,22 @@ const ViewAttendance = () => {
     fetchAttendanceData();
   }, []);
 
-   // Fetch attendance data for selected date
-   const fetchAttendanceByDate = async () => {
+  const fetchAttendanceByDate = async () => {
     if (!selectedDate) return;
-
+  
     try {
       //const response = await axios.get(`http://localhost:8080/admin/attendance/date?date=${selectedDate}`);
       const response = await axios.get(`https://final-attendance.onrender.com/admin/attendance/date?date=${selectedDate}`);
-      console.log('Fetched Attendance Data:', response.data);
-
-      // Calculate login/logout counts based on all attendance data for the selected date
-      calculateLoginLogoutCounts(response.data);
-      
-      // Filter data to get the most recent attendance record for each user
+      console.log('Fetched Attendance Data for selected date:', response.data);
+  
+      // NEW: Filter data to get the most recent attendance record for each user
       const uniqueUserAttendance = {};
   
       response.data.forEach((record) => {
         const userId = record.user?.id;
         if (userId) {
           const currentRecordTime = new Date(record.loginTime || record.logoutTime);
-          
+  
           // Check if we already have a record for this user and if this record is more recent
           if (!uniqueUserAttendance[userId] || currentRecordTime > new Date(uniqueUserAttendance[userId].time)) {
             uniqueUserAttendance[userId] = {
@@ -89,18 +83,125 @@ const ViewAttendance = () => {
         }
       });
   
-      // Convert the object back to an array of unique records
+      // Convert the object back to an array of unique records (most recent for each user)
       const distinctAttendance = Object.values(uniqueUserAttendance);
-
-      setAttendanceData(distinctAttendance); // Update attendance data
-
+  
+      // Fetch duration for each user on the selected date
+      const updatedAttendanceData = await Promise.all(
+        distinctAttendance.map(async (record) => {
+          const userId = record.user?.id;
+          if (userId) {
+            try {
+              const durationResponse = await axios.get(
+                //`http://localhost:8080/admin/attendance/duration?userId=${userId}&date=${selectedDate}`
+                  `https://final-attendance.onrender.com/admin/attendance/duration?userId=${userId}&date=${selectedDate}`
+              );
+              const duration = durationResponse.data || 'N/A';
+              return { ...record, duration }; // Add duration to each record
+            } catch (err) {
+              console.error('Error fetching duration:', err);
+              return { ...record, duration: 'N/A' };
+            }
+          }
+          return { ...record, duration: 'N/A' };
+        })
+      );
+  
+      setAttendanceData(updatedAttendanceData); // Update attendance data with duration
+  
       // Reprocess last login status and login/logout counts with distinct attendance data
-      processLastLoginStatus(distinctAttendance);
+      processLastLoginStatus(updatedAttendanceData);
+      calculateLoginLogoutCounts(response.data);
+  
     } catch (err) {
       console.error('Error fetching attendance data for the selected date:', err);
       setError('Failed to load attendance data for the selected date.');
     }
   };
+  
+   // Fetch attendance data for selected date
+  //  const fetchAttendanceByDate = async () => {
+  //   if (!selectedDate) return;
+
+    
+  //   try {
+  //     const response = await axios.get(`http://localhost:8080/admin/attendance/date?date=${selectedDate}`);
+  //     console.log('Fetched Attendance Data for selected date:', response.data);
+
+  //     // Fetch duration for each user on the selected date
+  //     const updatedAttendanceData = await Promise.all(
+  //       response.data.map(async (record) => {
+  //         const userId = record.user?.id;
+  //         if (userId) {
+  //           try {
+  //             const durationResponse = await axios.get(
+  //               `http://localhost:8080/admin/attendance/duration?userId=${userId}&date=${selectedDate}`
+  //             );
+  //             const duration = durationResponse.data || 'N/A';
+  //             return { ...record, duration }; // Add duration to each record
+  //           } catch (err) {
+  //             console.error('Error fetching duration:', err);
+  //             return { ...record, duration: 'N/A' };
+  //           }
+  //         }
+  //         return { ...record, duration: 'N/A' };
+  //       })
+  //     );
+
+  //     setAttendanceData(updatedAttendanceData); // Update attendance data with duration
+
+  //     // Reprocess last login status and login/logout counts with distinct attendance data
+  //     processLastLoginStatus(updatedAttendanceData);
+  //     calculateLoginLogoutCounts(response.data);
+  //   } catch (err) {
+  //     console.error('Error fetching attendance data for the selected date:', err);
+  //     setError('Failed to load attendance data for the selected date.');
+  //   }
+  // };
+
+
+  //  const fetchAttendanceByDate = async () => {
+  //   if (!selectedDate ) return;
+
+  //   try {
+  //     const response = await axios.get(`http://localhost:8080/admin/attendance/date?date=${selectedDate}`);
+  //     //const response = await axios.get(`https://final-attendance.onrender.com/admin/attendance/date?date=${selectedDate}`);
+  //     console.log('Fetched Attendance Data:', response.data);
+
+  //     // Calculate login/logout counts based on all attendance data for the selected date
+  //     calculateLoginLogoutCounts(response.data);
+      
+  //     // Filter data to get the most recent attendance record for each user
+  //     const uniqueUserAttendance = {};
+  
+  //     response.data.forEach((record) => {
+  //       const userId = record.user?.id;
+  //       if (userId) {
+  //         const currentRecordTime = new Date(record.loginTime || record.logoutTime);
+          
+  //         // Check if we already have a record for this user and if this record is more recent
+  //         if (!uniqueUserAttendance[userId] || currentRecordTime > new Date(uniqueUserAttendance[userId].time)) {
+  //           uniqueUserAttendance[userId] = {
+  //             ...record, 
+  //             time: currentRecordTime, 
+  //             loginOption: record.loginOption || 'N/A', // Ensuring we have a loginOption in the record
+  //           };
+  //         }
+  //       }
+  //     });
+  
+  //     // Convert the object back to an array of unique records
+  //     const distinctAttendance = Object.values(uniqueUserAttendance);
+
+  //     setAttendanceData(distinctAttendance); // Update attendance data
+
+  //     // Reprocess last login status and login/logout counts with distinct attendance data
+  //     processLastLoginStatus(distinctAttendance);
+  //   } catch (err) {
+  //     console.error('Error fetching attendance data for the selected date:', err);
+  //     setError('Failed to load attendance data for the selected date.');
+  //   }
+  // };
 
   const processLastLoginStatus = (data) => {
     const lastLogin = {};
@@ -165,7 +266,7 @@ const ViewAttendance = () => {
     <div className="bg-gray-100 min-h-screen font-sans pb-20">
       <Header />
       <div className="flex items-center justify-between mb-2  space-x-4 w-full">
-      <h1 className="text-3xl font-bold text-left text-gray-800 ">Attendance Report</h1>
+      <h2 className="text-3xl font-bold text-left text-gray-800 ">Attendance Report</h2>
 
       {/* Date Input and Fetch Button */}
       
@@ -219,8 +320,11 @@ const ViewAttendance = () => {
                     : 'N/A'}
                 </td>
                 {selectedDate && (
+                  // <td className="border border-gray-300 px-4 py-3">
+                  //   {lastLoginStatus[attendance.user?.id]?.duration || 'N/A'}
+                  // </td>
                   <td className="border border-gray-300 px-4 py-3">
-                    {lastLoginStatus[attendance.user?.id]?.duration || 'N/A'}
+                    {attendance.duration || 'N/A'}
                   </td>
                 )}
                 <td className="border border-gray-300 px-4 py-3">{loginLogoutCounts[attendance.user?.id] || 0}</td>
