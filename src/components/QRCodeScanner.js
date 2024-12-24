@@ -57,8 +57,8 @@ const QRCodeScanner = () => {
 
     const fetchInstituteId = async (instituteName) => {
         try {
-               // const response = await axios.get('https://final-attendance.onrender.com/api/institute/id', {
-                const response = await axios.get('http://localhost:8080/api/institute/id', {
+                const response = await axios.get('https://final-attendance.onrender.com/api/institute/id', {
+               // const response = await axios.get('http://localhost:8080/api/institute/id', {
                 params: { instituteName },
             });
             console.log('Institute ID fetched:', response.data);
@@ -72,8 +72,8 @@ const QRCodeScanner = () => {
 
     const determineAttendanceAction = async (instituteId) => {
         try {
-             //const response = await axios.post('https://final-attendance.onrender.com/api/attendance/determine', { userId });
-              const response = await axios.post('http://localhost:8080/api/attendance/determine', { userId });
+             const response = await axios.post('https://final-attendance.onrender.com/api/attendance/determine', { userId });
+             // const response = await axios.post('http://localhost:8080/api/attendance/determine', { userId });
             const { loginOption } = response.data;
 
             if (loginOption === 'login') {
@@ -98,8 +98,8 @@ const QRCodeScanner = () => {
                 loginOption,
                 instituteId,
             };
-           // await axios.post('https://final-attendance.onrender.com/api/attendance/add', attendanceData);
-            await axios.post('http://localhost:8080/api/attendance/add'  , attendanceData);
+            await axios.post('https://final-attendance.onrender.com/api/attendance/add', attendanceData);
+           // await axios.post('http://localhost:8080/api/attendance/add'  , attendanceData);
             navigate('/login-success');
         } catch (error) {
             console.error('Error marking attendance:', error);

@@ -16,7 +16,9 @@ const ViewAttendance = () => {
       try {
        // const response = await axios.get('https://final-attendance.onrender.com/admin/attendance/all');
        // const response = await axios.get('http://localhost:8080/admin/attendance/all');
-       const response = await axios.get('http://localhost:8080/admin/attendance/today'); 
+       
+       //const response = await axios.get('http://localhost:8080/admin/attendance/today'); 
+       const response = await axios.get('https://final-attendance.onrender.com/admin/attendance/today'); 
        console.log('Fetched Attendance Data:', response.data); 
 
         // NEW: Filter data to get the most recent attendance record for each user
@@ -61,8 +63,8 @@ const ViewAttendance = () => {
     if (!selectedDate) return;
 
     try {
-      const response = await axios.get(`http://localhost:8080/admin/attendance/date?date=${selectedDate}`);
-      //const response = await axios.get(`https://final-attendance.onrender.com/admin/attendance/date?date=${selectedDate}`);
+      //const response = await axios.get(`http://localhost:8080/admin/attendance/date?date=${selectedDate}`);
+      const response = await axios.get(`https://final-attendance.onrender.com/admin/attendance/date?date=${selectedDate}`);
       console.log('Fetched Attendance Data:', response.data);
 
       // Calculate login/logout counts based on all attendance data for the selected date

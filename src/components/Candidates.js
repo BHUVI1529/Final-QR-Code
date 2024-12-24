@@ -12,8 +12,8 @@ const Candidates = () => {
   useEffect(() => {
     // Fetching the data from the backend
     axios
-     //.get('https://final-attendance.onrender.com/admin/users') // Update with the correct URL if necessary
-      .get(`http://localhost:8080/admin/users`) // Update with the correct URL if necessary
+     .get('https://final-attendance.onrender.com/admin/users') // Update with the correct URL if necessary
+      //.get(`http://localhost:8080/admin/users`) // Update with the correct URL if necessary
 
       .then(response => {
         console.log('API response:', response.data); // Debugging API response
@@ -46,8 +46,8 @@ const Candidates = () => {
 
   const handleDelete = (id) => {
     axios
-      //.delete(`https://final-attendance.onrender.com/admin/user/${id}`)
-      .delete(`http://localhost:8080/admin/user/${id}`)
+      .delete(`https://final-attendance.onrender.com/admin/user/${id}`)
+      //.delete(`http://localhost:8080/admin/user/${id}`)
       .then(() => {
         alert('User deleted successfully');
         setCandidates(candidates.filter(candidate => candidate.id !== id));
@@ -60,8 +60,8 @@ const Candidates = () => {
 
   const handleSave = () => {
     axios
-      //.put(`https://final-attendance.onrender.com/admin/user/${editCandidate.id}`, editCandidate)
-      .put(`http://localhost:8080/admin/user/${editCandidate.id}`, editCandidate)
+      .put(`https://final-attendance.onrender.com/admin/user/${editCandidate.id}`, editCandidate)
+      //.put(`http://localhost:8080/admin/user/${editCandidate.id}`, editCandidate)
       .then(() => {
         alert('User updated successfully');
         const updatedCandidates = candidates.map(candidate =>
@@ -211,7 +211,7 @@ const Candidates = () => {
         </table>
       </div>
        {/* Footer */}
-       <footer className="bg-gray-700 text-white text-center py-4">
+      <footer className="bg-gray-700 text-white text-center py-4">
           <p className="text-sm">
               &copy; {new Date().getFullYear()} AppteKnow Careers. All rights reserved.
           </p>
