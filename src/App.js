@@ -28,7 +28,7 @@ import Forgotpassword from './components/Forgotpassword';
 import Candidates from './components/Candidates';
 import ApplyLeave from './components/ApplyLeave';
 import ViewAttendance from './components/ViewAttendance';
-
+// import ToolTip from './components/ToolTip';
 
 function App() {
   return (
@@ -41,9 +41,9 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/candidates" element={<Candidates />} />
-        <Route path="/view-attendance" element={<ViewAttendance />} /> {/* Candidate Component */}
+        <Route path="/view-attendance" element={<ViewAttendance />} /> 
+        {/* <Route path="/tooltip" element={<ToolTip />} /> */}
         <Route path="/register" element={<Register />} />
-        {/* <Route path="/attendance" element={<Attendance />} /> */}
         <Route path="/qr-scanner" element={<QRCodeScanner />} />
         <Route path="/user-dashboard" element={<UserDashboard />} />
         <Route path="/login-success" element={<LoginSuccess />} />
