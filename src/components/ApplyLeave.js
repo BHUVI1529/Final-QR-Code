@@ -33,8 +33,8 @@ const ApplyLeave = () => {
 
         try {
             const response = await axios.post(
-                'http://localhost:8080/api/leave',
-                //'https://final-attendance.onrender.com/api/leave',
+                //'http://localhost:8080/api/leave',
+                'https://final-attendance.onrender.com/api/leave',
                 leaveApplication,
                 {
                     headers: {

@@ -61,8 +61,8 @@ function Dashboard() {
   useEffect(() => {
     const fetchTotalStudents = async () => {
       try {
-        //  const response = await fetch('https://final-attendance.onrender.com/admin/users/count');
-         const response = await fetch('http://localhost:8080/admin/users/count');
+          const response = await fetch('https://final-attendance.onrender.com/admin/users/count');
+        // const response = await fetch('http://localhost:8080/admin/users/count');
 
         const data = await response.json();
         setTotalStudents(data.total);
@@ -74,8 +74,8 @@ function Dashboard() {
 
     const fetchAttendanceData = async () => {
       try {
-       // const response = await fetch('https://final-attendance.onrender.com/admin/attendance/all');  // Replace with your endpoint for weekly attendance
-        const response = await fetch('http://localhost:8080/admin/attendance/all');  // Replace with your endpoint for weekly attendance
+        const response = await fetch('https://final-attendance.onrender.com/admin/attendance/all');  // Replace with your endpoint for weekly attendance
+       // const response = await fetch('http://localhost:8080/admin/attendance/all');  // Replace with your endpoint for weekly attendance
 
         const data = await response.json();
         const presentData = data.present || [0, 0, 0, 0, 0];  // Fallback to empty data if not available
@@ -108,8 +108,8 @@ function Dashboard() {
   useEffect(() => {
     const fetchPresentToday = async () => {
       try {
-        // const response = await fetch('https://final-attendance.onrender.com/api/attendance/count/present-today');
-         const response = await fetch('http://localhost:8080/api/attendance/count/present-today');
+         const response = await fetch('https://final-attendance.onrender.com/api/attendance/count/present-today');
+        // const response = await fetch('http://localhost:8080/api/attendance/count/present-today');
 
         const data = await response.json();
         console.log('Present today:', data.presentToday); // Log the result
@@ -142,7 +142,8 @@ function Dashboard() {
   useEffect(() => {
     const fetchOnLeaveCount = async () => {
       try {
-        const response = await fetch('http://localhost:8080/api/leave/on-leave-count');
+       // const response = await fetch('http://localhost:8080/api/leave/on-leave-count');
+        const response = await fetch('https://final-attendance.onrender.com/api/leave/on-leave-count');
         const data = await response.json();
         setOnLeave(data || 0);
       } catch (error) {
@@ -160,8 +161,8 @@ function Dashboard() {
     const fetchAbsentCount = async () => {
       try {
         const today = new Date().toISOString().split('T')[0]; // Default to today's date
-        const response = await fetch(`http://localhost:8080/api/attendance/count/absentees?date=${today}`, {
-       // const response = await fetch(`https://final-attendance.onrender.com/api/attendance/count/absentees?date=${today}`, {
+       // const response = await fetch(`http://localhost:8080/api/attendance/count/absentees?date=${today}`, {
+        const response = await fetch(`https://final-attendance.onrender.com/api/attendance/count/absentees?date=${today}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`, // Ensure token is passed
           },
