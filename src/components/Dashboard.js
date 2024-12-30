@@ -57,6 +57,48 @@ function Dashboard() {
     },
   ]);
 
+  const [departmentData, setDepartmentData] = useState({
+    labels: [],
+    datasets: [
+      {
+        data: [],
+        backgroundColor: [],
+      },
+    ],
+  });
+
+  useEffect(() => {
+    const fetchDepartmentData = async () => {
+      try {
+        const response = await fetch('https://final-attendance.onrender.com/admin/course-distribution');
+        //const response = await fetch('http://localhost:8080/admin/course-distribution');
+        const data = await response.json();
+        const labels = Object.keys(data); // ['java', 'unknown', 'Java Full Stack', 'Python Full Stack']
+        const values = Object.values(data); // [1, 1, 3, 1]
+        const backgroundColors = [
+          'rgba(16, 185, 129, 0.8)',
+          'rgba(249, 115, 22, 0.8)',
+          'rgba(139, 92, 246, 0.8)',
+          'rgba(236, 72, 153, 0.8)',
+        ];
+
+        setDepartmentData({
+          labels: labels,
+          datasets: [
+            {
+              data: values,
+              backgroundColor: backgroundColors,
+            },
+          ],
+        });
+      } catch (error) {
+        console.error('Error fetching department data:', error);
+      }
+    };
+
+    fetchDepartmentData();
+  }, []);
+
   // Fetch total students and attendance data
   useEffect(() => {
     const fetchTotalStudents = async () => {
@@ -123,21 +165,7 @@ function Dashboard() {
     fetchPresentToday();
   }, []);
 
-  const departmentData = {
-    labels: ['Java Fullstack', 'Python', 'Testing', 'Data Analytics', 'AI'],
-    datasets: [
-      {
-        data: [30, 20, 15, 10, 25],
-        backgroundColor: [
-          'rgba(59, 130, 246, 0.8)',
-          'rgba(16, 185, 129, 0.8)',
-          'rgba(249, 115, 22, 0.8)',
-          'rgba(139, 92, 246, 0.8)',
-          'rgba(236, 72, 153, 0.8)',
-        ],
-      },
-    ],
-  };
+  
   
   useEffect(() => {
     const fetchOnLeaveCount = async () => {
