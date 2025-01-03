@@ -14,7 +14,7 @@ function AbsenteesPage() {
     }
     try {
       console.log("Fetching absentees for date:", date);
-      const response = await axios.get('https://final-attendance.onrender.com/admin/absentees', {
+       const response = await axios.get('https://final-attendance.onrender.com/admin/absentees', {
       // const response = await axios.get('http://localhost:8080/admin/absentees', {
         params: { date },
         headers: {
@@ -87,6 +87,7 @@ function AbsenteesPage() {
           <thead>
             <tr style={{ backgroundColor: '#4caf50', color: 'white' }}>
               <th style={{ border: '1px solid #ddd', padding: '12px', textAlign: 'left' }}>Name</th>
+              <th style={{ border: '1px solid #ddd', padding: '12px', textAlign: 'left' }}>Phone</th>
               <th style={{ border: '1px solid #ddd', padding: '12px', textAlign: 'left' }}>Course</th>
               <th style={{ border: '1px solid #ddd', padding: '12px', textAlign: 'left' }}>Date</th>
             </tr>
@@ -96,6 +97,7 @@ function AbsenteesPage() {
               absentees.map((absentee, index) => (
                 <tr key={index} style={{ backgroundColor: index % 2 === 0 ? '#f9f9f9' : '#fff' }}>
                   <td style={{ border: '1px solid #ddd', padding: '12px' }}>{absentee.name}</td>
+                  <td style={{ border: '1px solid #ddd', padding: '12px' }}>{absentee.phoneNumber}</td>
                   <td style={{ border: '1px solid #ddd', padding: '12px' }}>{absentee.course}</td>
                   <td style={{ border: '1px solid #ddd', padding: '12px' }}>{date}</td>
                 </tr>
@@ -115,19 +117,13 @@ function AbsenteesPage() {
       </div>
 
        {/* Footer */}
-       <footer
-        className="bg-gray-700 text-white text-center py-4"
-        style={{
-          position: "fixed",
-          bottom: 0,
-          width: "100%",
-          backgroundColor: "#333", // Ensure footer background color matches
-        }}
-      >
-        <p className="text-sm">
-          &copy; {new Date().getFullYear()} AppteKnow Careers. All rights reserved.
-        </p>
-        <p className="text-sm">Designed and developed by GRID R&D</p>
+      <footer className="bg-gray-700 text-white text-center py-4">
+          <p className="text-sm">
+              &copy; {new Date().getFullYear()} AppteKnow Careers. All rights reserved.
+          </p>
+          <p className="text-sm">
+              Designed and developed by GRID R&D
+          </p>
       </footer>
     </div>
   );

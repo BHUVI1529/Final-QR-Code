@@ -25,7 +25,7 @@ const RemarkPage = () => {
             };
 
              await axios.post('https://final-attendance.onrender.com/api/attendance/add', attendanceData);
-           // await axios.post('http://localhost:8080/api/attendance/add', attendanceData);
+            // await axios.post('http://localhost:8080/api/attendance/add', attendanceData);
             navigate('/logout-success');
         } catch (error) {
             console.error("Error submitting remark:", error);

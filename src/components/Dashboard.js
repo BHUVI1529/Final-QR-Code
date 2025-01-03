@@ -71,7 +71,7 @@ function Dashboard() {
     const fetchDepartmentData = async () => {
       try {
         const response = await fetch('https://final-attendance.onrender.com/admin/course-distribution');
-        //const response = await fetch('http://localhost:8080/admin/course-distribution');
+       // const response = await fetch('http://localhost:8080/admin/course-distribution');
         const data = await response.json();
         const labels = Object.keys(data); // ['java', 'unknown', 'Java Full Stack', 'Python Full Stack']
         const values = Object.values(data); // [1, 1, 3, 1]

@@ -8,8 +8,12 @@ const Candidates = () => {
   const [filteredCandidates, setFilteredCandidates] = useState([]);
   const [editCandidate, setEditCandidate] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [loading, setLoading] = useState(true); // Loader state
+  
 
   useEffect(() => {
+    setLoading(true); // Set loading to true before fetching data
+    
     // Fetching the data from the backend
     axios
      .get('https://final-attendance.onrender.com/admin/users') // Update with the correct URL if necessary
@@ -19,9 +23,11 @@ const Candidates = () => {
         console.log('API response:', response.data); // Debugging API response
         setCandidates(response.data);
         setFilteredCandidates(response.data);
+        setLoading(false); // Data fetched, set loading to false
       })
       .catch(error => {
         console.error('Error fetching users:', error);
+        setLoading(false); // Data fetched, set loading to false
       });
   }, []);
 

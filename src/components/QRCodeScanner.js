@@ -13,6 +13,10 @@ const QRCodeScanner = () => {
     const navigate = useNavigate();
     const userId = localStorage.getItem('id');
 
+    const instituteLatitude = 12.9165171; // Fixed institute latitude
+    const instituteLongitude = 77.6014199; // Fixed institute longitude
+    const allowedRadius = 50; // 50 meters
+
     useEffect(() => {
         if (!userId) {
             setError('You need to log in before scanning the QR code.');
@@ -31,11 +35,28 @@ const QRCodeScanner = () => {
 
                 if (location && institutename) {
                     setInstituteName(institutename);
-                    const instituteId = await fetchInstituteId(institutename);
-                    if (instituteId) {
-                        await determineAttendanceAction(instituteId);
+
+                    
+                    // Get the user's current location
+                    const userLocation = await getUserLocation();
+                    if (userLocation) {
+                        const { latitude, longitude } = userLocation;
+                        const distance = calculateDistance(latitude, longitude, instituteLatitude, instituteLongitude);
+
+                        if (distance <= allowedRadius) {
+                            const instituteId = await fetchInstituteId(institutename);
+                            if (instituteId) {
+                                await determineAttendanceAction(instituteId);
+                            } else {
+                                setError('Institute details not found. Please try again.');
+                                resetScanner();
+                            }
+                        } else {
+                            setWarningMessage('You are not within the institute premises. Please try again.');
+                            resetScanner();
+                        }
                     } else {
-                        setError('Institute details not found. Please try again.');
+                        setError('Unable to retrieve your location.');
                         resetScanner();
                     }
                 } else {
@@ -54,6 +75,47 @@ const QRCodeScanner = () => {
         console.error('QR Code scanning error:', error);
         setError('Unable to access camera or scan QR code');
     };
+
+    const getUserLocation = () => {
+        return new Promise((resolve, reject) => {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        resolve({
+                            latitude: position.coords.latitude,
+                            longitude: position.coords.longitude,
+                        });
+                    },
+                    (error) => {
+                        console.error('Error getting location:', error);
+                        reject(null);
+                    }
+                );
+            } else {
+                console.error('Geolocation is not supported by this browser.');
+                reject(null);
+            }
+        });
+    };
+
+    const calculateDistance = (lat1, lon1, lat2, lon2) => {
+        const toRadians = (degree) => (degree * Math.PI) / 180;
+        const R = 6371e3; // Earth's radius in meters
+
+        const φ1 = toRadians(lat1);
+        const φ2 = toRadians(lat2);
+        const Δφ = toRadians(lat2 - lat1);
+        const Δλ = toRadians(lon2 - lon1);
+
+        const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+                  Math.cos(φ1) * Math.cos(φ2) *
+                  Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        return R * c; // Distance in meters
+    };
+
 
     const fetchInstituteId = async (instituteName) => {
         try {

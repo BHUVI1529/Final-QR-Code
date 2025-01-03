@@ -42,7 +42,7 @@ const ViewAttendance = () => {
       const distinctAttendance = Object.values(uniqueUserAttendance);
        setAttendanceData(distinctAttendance); 
 
-       // Reprocess last login status and login/logout counts with distinct attendance data
+       // Reprocess last login  status and login/logout counts with distinct attendance data
       processLastLoginStatus(distinctAttendance);
       calculateLoginLogoutCounts(response.data);
         setLoading(false); // Mark loading as false
@@ -252,19 +252,13 @@ const ViewAttendance = () => {
         </table>
       </div>
       {/* Footer */}
-      <footer
-        className="bg-gray-700 text-white text-center py-4"
-        style={{
-          position: "fixed",
-          bottom: 0,
-          width: "100%",
-          backgroundColor: "#333", // Ensure footer background color matches
-        }}
-      >
-        <p className="text-sm">
-          &copy; {new Date().getFullYear()} AppteKnow Careers. All rights reserved.
-        </p>
-        <p className="text-sm">Designed and developed by GRID R&D</p>
+      <footer className="bg-gray-700 text-white text-center py-4">
+          <p className="text-sm">
+              &copy; {new Date().getFullYear()} AppteKnow Careers. All rights reserved.
+          </p>
+          <p className="text-sm">
+              Designed and developed by GRID R&D
+          </p>
       </footer>
     </div>
   );
