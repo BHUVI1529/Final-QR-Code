@@ -43,7 +43,7 @@ const QRCodeScanner = () => {
                         const { latitude, longitude } = userLocation;
                         const distance = calculateDistance(latitude, longitude, instituteLatitude, instituteLongitude);
 
-                        if (distance >= allowedRadius) {
+                        if (distance <= allowedRadius) {
                             const instituteId = await fetchInstituteId(institutename);
                             if (instituteId) {
                                 await determineAttendanceAction(instituteId);
