@@ -94,6 +94,16 @@ const LeavesPage = () => {
     }
   };
 
+  const formatToIndianDate = (dateString) => {
+    // Parse the backend date string (e.g., "2025-01-01")
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-indexed
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+  };
+
+
   return (
     <div
       style={{
@@ -156,7 +166,7 @@ const LeavesPage = () => {
           >
             <thead style={{ backgroundColor: "#4CAF50", color: "#fff" }}>
               <tr>
-                <th style={{ padding: "10px" }}>Request ID</th>
+                <th style={{ padding: "10px" }}>ID</th>
                 <th style={{ padding: "10px" }}>User Name</th>
                 <th style={{ padding: "10px" }}>From Date</th>
                 <th style={{ padding: "10px" }}>To Date</th>
@@ -176,8 +186,12 @@ const LeavesPage = () => {
                 >
                   <td style={{ padding: "10px" }}>{leave.id}</td>
                   <td style={{ padding: "10px" }}>{leave.userName}</td>
-                  <td style={{ padding: "10px" }}>{leave.fromDate || "N/A"}</td>
-                  <td style={{ padding: "10px" }}>{leave.toDate || "N/A"}</td>
+                  <td style={{ padding: "10px", textAlign: "center" }}>
+                    {formatToIndianDate(leave.fromDate)}
+                  </td>
+                  <td style={{ padding: "10px", textAlign: "center" }}>
+                    {formatToIndianDate(leave.toDate)}
+                  </td>
                   <td style={{ padding: "10px" }}>{leave.reason || "N/A"}</td>
                   <td style={{ padding: "10px" }}>{leave.status || "Pending"}</td>
                   <td style={{ padding: "10px" }}>
@@ -191,6 +205,7 @@ const LeavesPage = () => {
                               color: "white",
                               padding: "5px 10px",
                               border: "none",
+                              borderRadius: "4px",
                               cursor: "pointer",
                             }}
                           >
@@ -203,6 +218,7 @@ const LeavesPage = () => {
                               color: "white",
                               padding: "5px 10px",
                               border: "none",
+                              borderRadius: "4px",
                               cursor: "pointer",
                             }}
                           >

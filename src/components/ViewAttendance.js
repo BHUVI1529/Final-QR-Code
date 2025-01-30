@@ -40,10 +40,17 @@ const ViewAttendance = () => {
 
       // NEW: Convert the object back to an array of unique records (most recent for each user)
       const distinctAttendance = Object.values(uniqueUserAttendance);
-       setAttendanceData(distinctAttendance); 
 
+      const sortedAttendanceData = distinctAttendance.sort((a,b) => {
+        const timeA = new Date(a.loginTime || a.time);
+        const timeB = new Date(b.loginTime || b.time);
+        return timeA - timeB;
+      });
+      setAttendanceData(sortedAttendanceData);
+      processLastLoginStatus(sortedAttendanceData);
+      //  setAttendanceData(distinctAttendance); 
        // Reprocess last login  status and login/logout counts with distinct attendance data
-      processLastLoginStatus(distinctAttendance);
+     // processLastLoginStatus(distinctAttendance);
       calculateLoginLogoutCounts(response.data);
         setLoading(false); // Mark loading as false
       } catch (err) {
@@ -106,11 +113,19 @@ const ViewAttendance = () => {
           return { ...record, duration: 'N/A' };
         })
       );
-  
-      setAttendanceData(updatedAttendanceData); // Update attendance data with duration
-  
-      // Reprocess last login status and login/logout counts with distinct attendance data
-      processLastLoginStatus(updatedAttendanceData);
+       // Sort attendance data by loginTime or logoutTime
+       const sortedAttendanceData = updatedAttendanceData.sort((a, b) => {
+        const timeA = new Date(a.loginTime || a.logoutTime);
+        const timeB = new Date(b.loginTime || b.logoutTime);
+        return timeA - timeB; // Ascending order (earliest first)
+      });
+
+      setAttendanceData(sortedAttendanceData);
+      processLastLoginStatus(sortedAttendanceData);
+      calculateLoginLogoutCounts(response.data);
+      // setAttendanceData(updatedAttendanceData); // Update attendance data with duration
+      // // Reprocess last login status and login/logout counts with distinct attendance data
+      // processLastLoginStatus(updatedAttendanceData);
       calculateLoginLogoutCounts(response.data);
   
     } catch (err) {
@@ -118,24 +133,18 @@ const ViewAttendance = () => {
       setError('Failed to load attendance data for the selected date.');
     }
   };
-  
-  
 
   const processLastLoginStatus = (data) => {
     const lastLogin = {};
 
     const calculateDuration = (loginTime, logoutTime) => {
       if (!loginTime || !logoutTime) return "N/A";
-  
       const start = new Date(loginTime);
       const end = new Date(logoutTime);
-  
       const diffInMilliseconds = end - start;
       const diffInMinutes = Math.floor(diffInMilliseconds / (1000 * 60));
-  
       const hours = Math.floor(diffInMinutes / 60); //Get hours
       const minutes = diffInMinutes % 60; //Get remaining minutes
-  
       return `${hours} hrs ${minutes} mins`;
     };
 
@@ -144,12 +153,10 @@ const ViewAttendance = () => {
       if (userId) {
         const loginTime = record.loginTime ? new Date(record.loginTime) : null;
         const logoutTime = record.logoutTime ? new Date(record.logoutTime) : null;
-
         //Calculate the most recent login or logout time
         const mostRecentTime = logoutTime && loginTime
         ? (logoutTime > loginTime ? logoutTime : loginTime)
         : loginTime || logoutTime;
-
         if (!lastLogin[userId] || mostRecentTime > new Date(lastLogin[userId].time)) {
           lastLogin[userId] = {
             loginOption: mostRecentTime === logoutTime ? 'Logout' : record.loginOption,
@@ -165,7 +172,6 @@ const ViewAttendance = () => {
 
   const calculateLoginLogoutCounts = (data) => {
     const counts = {};
-
     data.forEach((record) => {
       const userId = record.user?.id;
       if (userId) {
@@ -181,87 +187,92 @@ const ViewAttendance = () => {
   if (error) return <p style={{ textAlign: 'center', color: 'red', fontSize: '18px' }}>{error}</p>;
 
   return (
-    <div className="bg-gray-100 min-h-screen font-sans pb-20">
+    <div className="bg-gray-100 min-h-screen font-sans flex flex-col">
+      {/* Header */}
       <Header />
-      <div className="flex items-center justify-between mb-2  space-x-4 w-full">
-      <h2 className="text-3xl font-bold text-left text-gray-800 ">Attendance Report</h2>
-
-      {/* Date Input and Fetch Button */}
-      
-        <div className="flex items-center space-x-4">
-          <input
-            type="date"
-            value={selectedDate}
-            onChange={(e) => setSelectedDate(e.target.value)}
-            className="px-4 py-2 max-w-xs text-lg border border-gray-300 rounded-md mr-4"
-          />
-          <button
-            onClick={fetchAttendanceByDate}
-            className="px-4 py-2 max-w-xs bg-green-500 text-white text-lg font-medium rounded-md hover:bg-green-600"
-          >
-           Search
-          </button>
+  
+      {/* Main Content */}
+      <div className="flex-grow px-6">
+        <div className="flex items-center justify-between mb-2 space-x-4 w-full">
+          <h2 className="text-3xl font-bold text-left text-gray-800">
+            Attendance Report
+          </h2>
+  
+          {/* Date Input and Fetch Button */}
+          <div className="flex items-center space-x-4">
+            <input
+              type="date"
+              value={selectedDate}
+              onChange={(e) => setSelectedDate(e.target.value)}
+              className="px-4 py-2 max-w-xs text-lg border border-gray-300 rounded-md mr-4"
+            />
+            <button
+              onClick={fetchAttendanceByDate}
+              className="px-4 py-2 max-w-xs bg-green-500 text-white text-lg font-medium rounded-md hover:bg-green-600"
+            >
+              Search
+            </button>
+          </div>
         </div>
-        </div>
-    
-
-      <div className="overflow-x-auto">
-        <table className="min-w-full bg-white shadow-lg border-collapse">
-          <thead>
-            <tr className="bg-green-500 text-white">
-              <th className="border border-gray-300 px-4 py-3 text-left">S.No</th>
-              <th className="border border-gray-300 px-4 py-3 text-left">Name</th>
-              <th className="border border-gray-300 px-4 py-3 text-left">Phone</th>
-              <th className="border border-gray-300 px-4 py-3 text-left">Status</th>
-              <th className="border border-gray-300 px-4 py-3 text-left">Time</th>
-              {selectedDate && (
-                <th className="border border-gray-300 px-4 py-3 text-left">Duration</th>
-              )}
-              {/* <th className="border border-gray-300 px-4 py-3 text-left">Duration</th> */}
-              <th className="border border-gray-300 px-4 py-3 text-left">Total Login-Logout Count</th>
-            </tr>
-          </thead>
-          <tbody>
-            {attendanceData.map((attendance, index) => (
-              <tr key={index} className={index % 2 === 0 ? 'bg-gray-100' : 'bg-white'}>
-                <td className="border border-gray-300 px-4 py-3">{index + 1}</td>
-                <td className="border border-gray-300 px-4 py-3">{attendance.user?.name || 'No Name'}</td>
-                <td className="border border-gray-300 px-4 py-3">{attendance.user?.phoneNumber || 'N/A'}</td>
-                <td className="border border-gray-300 px-4 py-3">{lastLoginStatus[attendance.user?.id]?.loginOption || 'N/A'}</td>
-                <td className="border border-gray-300 px-4 py-3">
-                  {lastLoginStatus[attendance.user?.id]?.time
-                    ? new Date(lastLoginStatus[attendance.user?.id].time).toLocaleString('en-US', {
-                        hour: 'numeric',
-                        minute: '2-digit',
-                        hour12: true,
-                      })
-                    : 'N/A'}
-                </td>
+  
+        <div className="overflow-x-auto">
+          <table className="min-w-full bg-white shadow-lg border-collapse">
+            <thead>
+              <tr className="bg-green-500 text-white">
+                <th className="border border-gray-300 px-4 py-3 text-left">S.No</th>
+                <th className="border border-gray-300 px-4 py-3 text-left">Name</th>
+                <th className="border border-gray-300 px-4 py-3 text-left">Phone</th>
+                <th className="border border-gray-300 px-4 py-3 text-left">Status</th>
+                <th className="border border-gray-300 px-4 py-3 text-left">Time</th>
                 {selectedDate && (
-                  // <td className="border border-gray-300 px-4 py-3">
-                  //   {lastLoginStatus[attendance.user?.id]?.duration || 'N/A'}
-                  // </td>
-                  <td className="border border-gray-300 px-4 py-3">
-                    {attendance.duration || 'N/A'}
-                  </td>
+                  <th className="border border-gray-300 px-4 py-3 text-left">Duration</th>
                 )}
-                <td className="border border-gray-300 px-4 py-3">{loginLogoutCounts[attendance.user?.id] || 0}</td>
+                <th className="border border-gray-300 px-4 py-3 text-left">Total Login-Logout Count</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {attendanceData.map((attendance, index) => (
+                <tr key={index} className={index % 2 === 0 ? 'bg-gray-100' : 'bg-white'}>
+                  <td className="border border-gray-300 px-4 py-3">{index + 1}</td>
+                  <td className="border border-gray-300 px-4 py-3">{attendance.user?.name || 'No Name'}</td>
+                  <td className="border border-gray-300 px-4 py-3">{attendance.user?.phoneNumber || 'N/A'}</td>
+                  <td className="border border-gray-300 px-4 py-3">
+                    {lastLoginStatus[attendance.user?.id]?.loginOption || 'N/A'}
+                  </td>
+                  <td className="border border-gray-300 px-4 py-3">
+                    {lastLoginStatus[attendance.user?.id]?.time
+                      ? new Date(lastLoginStatus[attendance.user?.id].time).toLocaleString('en-US', {
+                          hour: 'numeric',
+                          minute: '2-digit',
+                          hour12: true,
+                        })
+                      : 'N/A'}
+                  </td>
+                  {selectedDate && (
+                    <td className="border border-gray-300 px-4 py-3">
+                      {attendance.duration || 'N/A'}
+                    </td>
+                  )}
+                  <td className="border border-gray-300 px-4 py-3">{loginLogoutCounts[attendance.user?.id] || 0}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
+  
       {/* Footer */}
-      <footer className="bg-gray-700 text-white text-center py-4">
-          <p className="text-sm">
-              &copy; {new Date().getFullYear()} AppteKnow Careers. All rights reserved.
-          </p>
-          <p className="text-sm">
-              Designed and developed by GRID R&D
-          </p>
+      <footer className="bg-gray-700 text-white text-center py-4 mt-auto">
+        <p className="text-sm">
+          &copy; {new Date().getFullYear()} AppteKnow Careers. All rights reserved.
+        </p>
+        <p className="text-sm">
+          Designed and developed by GRID R&D
+        </p>
       </footer>
     </div>
   );
+  
 };
 
 export default ViewAttendance;

@@ -3,6 +3,8 @@ import axios from 'axios';
 import Cookies from "js-cookie";
 import { useNavigate } from 'react-router-dom'; // Import useNavigate for navigation
 import logo from './apptechknowlogo.jpeg'; // Replace with actual logo path
+import DatePicker from 'react-datepicker'; 
+import "react-datepicker/dist/react-datepicker.css"; 
 
 const ApplyLeave = () => {
     const [fromDate, setFromDate] = useState('');
@@ -11,6 +13,15 @@ const ApplyLeave = () => {
     const [message, setMessage] = useState('');
     const [modalOpen, setModalOpen] = useState(false); // State to control the modal visibility
     const navigate = useNavigate(); // Initialize useNavigate
+
+       // Function to format date to dd/mm/yyyy (Indian format)
+       const formatDate = (date) => {
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+        const year = date.getFullYear();
+        return  `${day}/${month}/${year}`;
+    };
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -77,23 +88,25 @@ const ApplyLeave = () => {
                     <form onSubmit={handleSubmit} className="space-y-5">
                         <div>
                             <label className="block text-left text-gray-600 font-medium">From Date</label>
-                            <input
-                                type="date"
-                                value={fromDate}
-                                onChange={(e) => setFromDate(e.target.value)}
-                                required
+                            <DatePicker
+                                selected={fromDate}
+                                onChange={(date) => setFromDate(date)}
+                                dateFormat="dd/MM/yyyy"
                                 className="mt-1 w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition"
+                                required
                             />
+
                         </div>
                         <div>
                             <label className="block text-left text-gray-600 font-medium">To Date</label>
-                            <input
-                                type="date"
-                                value={toDate}
-                                onChange={(e) => setToDate(e.target.value)}
-                                required
+                            <DatePicker
+                                selected={toDate}
+                                onChange={(date) => setToDate(date)}
+                                dateFormat="dd/MM/yyyy"
                                 className="mt-1 w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition"
+                                required
                             />
+
                         </div>
                         <div>
                             <label className="block text-left text-gray-600 font-medium">Reason for Leave</label>
@@ -103,6 +116,7 @@ const ApplyLeave = () => {
                                 required
                                 className="mt-1 w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition"
                             />
+
                         </div>
                         <button
                             type="submit"
@@ -110,12 +124,12 @@ const ApplyLeave = () => {
                         >
                             Submit
                         </button>
+
                     </form>
                     {message && (
-                        <p className="text-center mt-4 text-gray-700 font-medium">
-                            {message}
-                        </p>
+                        <p className="text-center mt-4 text-gray-700 font-medium">{message}</p>
                     )}
+
                 </div>
             </div>
 
@@ -125,25 +139,32 @@ const ApplyLeave = () => {
                     <div className="bg-white p-8 rounded-xl text-center max-w-md w-full shadow-lg">
                         <h2 className="text-2xl font-semibold text-green-500 mb-4">Leave Application Submitted</h2>
                         <p className="text-lg text-gray-700 mb-6">{message}</p>
+                        <p className="text-lg text-gray-700"> {fromDate && formatDate(fromDate)}</p>
+                        <p className="text-lg text-gray-700">{toDate && formatDate(toDate)}</p>
                         <button
                             onClick={handleCloseModal}
                             className="bg-blue-500 text-white px-6 py-3 rounded-xl hover:bg-blue-600"
                         >
-                            Go to Dashboard
+
+                             Go to Dashboard
+                        </button>
+                        <button
+                            onClick={() => navigate('/login')} // Route for login
+                            className="w-full py-3 bg-red-500 text-white font-semibold rounded-lg shadow-md hover:bg-red-600 transition duration-300 transform hover:-translate-y-1"
+                        >
+                            Logout
                         </button>
                     </div>
                 </div>
             )}
 
+
             {/* Footer Section */}
             <footer className="bg-teal-700 text-white text-center py-4 mt-8">
-                <p className="text-xs sm:text-sm">
-                    &copy; {new Date().getFullYear()} AppteKnow Careers. All rights reserved.
-                </p>
-                <p className="text-xs sm:text-sm">
-                    Designed and developed by GRID R&D
-                </p>
+                <p className="text-xs sm:text-sm">&copy; {new Date().getFullYear()} AppteKnow Careers. All rights reserved.</p>
+                <p className="text-xs sm:text-sm">Designed and developed by GRID R&D</p>
             </footer>
+
 
         </div>
     );

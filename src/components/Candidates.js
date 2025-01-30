@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Header from './Header';
+import { ClipLoader } from 'react-spinners'; // Import a spinner from react-spinners
 
 const Candidates = () => {
   const [candidates, setCandidates] = useState([]);
