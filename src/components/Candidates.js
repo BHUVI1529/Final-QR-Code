@@ -8,9 +8,11 @@ const Candidates = () => {
   const [filteredCandidates, setFilteredCandidates] = useState([]);
   const [editCandidate, setEditCandidate] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(true); // Loader state
 
   useEffect(() => {
     // Fetching the data from the backend
+    setIsLoading(true); // Show loader before fetching data
     axios
      .get('https://final-attendance.onrender.com/admin/users') // Update with the correct URL if necessary
      //.get(`http://localhost:8080/admin/users`) // Update with the correct URL if necessary
@@ -22,6 +24,9 @@ const Candidates = () => {
       })
       .catch(error => {
         console.error('Error fetching users:', error);
+      })
+      .finally(() => {
+        setIsLoading(false); // Hide loader after fetching data
       });
   }, []);
 
@@ -55,8 +60,8 @@ const Candidates = () => {
       })
       .catch(error => {
         console.error('Error deleting user:', error);
-      });
-  };
+      })
+  };  
 
   const handleSave = () => {
     axios
@@ -163,6 +168,9 @@ const Candidates = () => {
         </div>
       )}
 
+      {isLoading ? (
+        <div className="text-center text-gray-600 text-lg p-6">Loading candidates...</div>
+      ) : (
       <div className="overflow-x-auto bg-white rounded-lg shadow-lg">
         <table className="w-full text-left border-collapse">
           <thead className="bg-green-500 text-white">
@@ -175,7 +183,7 @@ const Candidates = () => {
               <th className="p-3">Actions</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody>           
             {filteredCandidates.length > 0 ? (
               filteredCandidates.map((candidate,index) => (
                 <tr key={candidate.id} className="odd:bg-gray-100 even:bg-gray-50">
@@ -210,6 +218,7 @@ const Candidates = () => {
           </tbody>
         </table>
       </div>
+      )}
        {/* Footer */}
       <footer className="bg-gray-700 text-white text-center py-4">
           <p className="text-sm">

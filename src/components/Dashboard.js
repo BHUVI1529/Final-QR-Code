@@ -142,7 +142,7 @@ function Dashboard() {
   useEffect(() => {
     const fetchOnLeaveCount = async () => {
       try {
-       // const response = await fetch('http://localhost:8080/api/leave/on-leave-count');
+      //  const response = await fetch('http://localhost:8080/api/leave/on-leave-count');
         const response = await fetch('https://final-attendance.onrender.com/api/leave/on-leave-count');
         const data = await response.json();
         setOnLeave(data || 0);
@@ -161,7 +161,7 @@ function Dashboard() {
     const fetchAbsentCount = async () => {
       try {
         const today = new Date().toISOString().split('T')[0]; // Default to today's date
-       // const response = await fetch(`http://localhost:8080/api/attendance/count/absentees?date=${today}`, {
+        //const response = await fetch(`http://localhost:8080/api/attendance/count/absentees?date=${today}`, {
         const response = await fetch(`https://final-attendance.onrender.com/api/attendance/count/absentees?date=${today}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`, // Ensure token is passed
@@ -204,7 +204,8 @@ function Dashboard() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <StatCard title="Total Students" value={totalStudents} icon={FaUsers} color="border-blue-500" />
           <StatCard title="Present Today" value={presentToday} icon={FaUserClock} color="border-green-500" />
-          <StatCard title="On Leave" value={onLeave} icon={FaCalendarCheck} color="border-yellow-500" />
+          {/* <StatCard title="On Leave" value={onLeave} icon={FaCalendarCheck} color="border-yellow-500" /> */}
+          <StatCard title="On Leave" value={"Under Modification"} icon={FaCalendarCheck} color="border-yellow-500" />
           <StatCard title="Absent" value={absentCount} icon={FaExclamationTriangle} color="border-red-500" />
         </div>
 

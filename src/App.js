@@ -17,7 +17,6 @@ import LeavesPage from './pages/LeavesPage';
 import Home from './components/Home';
 import Login from './components/Login';
 import Register from './components/Register';
-// import Attendance from './components/Attendance';
 
 import QRCodeScanner from './components/QRCodeScanner';
 import UserDashboard from './components/UserDashboard';
